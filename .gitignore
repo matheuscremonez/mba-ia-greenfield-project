@@ -1,2 +1,7 @@
 .history/
 settings.local.json
+
+# Local Codex workspace configuration
+/.agents/
+/.codex/
+/docs/codex-foundation.md

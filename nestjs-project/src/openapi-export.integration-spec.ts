@@ -128,4 +128,60 @@ describe('exportSpec (integration)', () => {
       }
     }
   });
+
+  it('documents all four authenticated multipart upload operations', () => {
+    const paths = document.paths as Record<
+      string,
+      Record<string, Record<string, unknown>>
+    >;
+    const operations = [
+      ['/videos/uploads', 'post', '201'],
+      ['/videos/{id}/uploads/parts', 'post', '200'],
+      ['/videos/{id}/uploads/complete', 'post', '202'],
+      ['/videos/{id}/uploads', 'delete', '204'],
+    ] as const;
+
+    for (const [path, method, successStatus] of operations) {
+      const operation = paths[path]?.[method];
+      expect(operation).toBeDefined();
+      expect(operation.responses).toHaveProperty(successStatus);
+      const security = operation.security as Array<Record<string, unknown>>;
+      expect(security.some((item) => 'access-token' in item)).toBe(true);
+    }
+  });
+
+  it('exports multipart request and response schemas', () => {
+    const components = document.components as Record<string, unknown>;
+    const schemas = components.schemas as Record<string, unknown>;
+    expect(schemas).toHaveProperty('InitiateVideoUploadDto');
+    expect(schemas).toHaveProperty('InitiatedVideoUploadResponseDto');
+    expect(schemas).toHaveProperty('SignUploadPartsDto');
+    expect(schemas).toHaveProperty('CompleteVideoUploadDto');
+  });
+
+  it('documents metadata and the three signed media redirects', () => {
+    const paths = document.paths as Record<
+      string,
+      Record<string, Record<string, unknown>>
+    >;
+    const operations = [
+      ['/videos/{id}', '200'],
+      ['/videos/{id}/thumbnail', '307'],
+      ['/videos/{id}/stream', '307'],
+      ['/videos/{id}/download', '307'],
+    ] as const;
+
+    for (const [path, successStatus] of operations) {
+      const operation = paths[path]?.get;
+      expect(operation).toBeDefined();
+      expect(operation.responses).toHaveProperty(successStatus);
+      const security = operation.security as Array<Record<string, unknown>>;
+      expect(security.some((item) => 'access-token' in item)).toBe(true);
+    }
+
+    const components = document.components as Record<string, unknown>;
+    const schemas = components.schemas as Record<string, unknown>;
+    expect(schemas).toHaveProperty('VideoResponseDto');
+    expect(schemas).toHaveProperty('VideoMetadataDto');
+  });
 });

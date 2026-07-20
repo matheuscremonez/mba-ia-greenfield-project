@@ -438,6 +438,671 @@
           "auth"
         ]
       }
+    },
+    "/videos/uploads": {
+      "post": {
+        "operationId": "VideosController_initiateUpload",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InitiateVideoUploadDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InitiatedVideoUploadResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Initialize a multipart video upload",
+        "tags": [
+          "videos"
+        ]
+      }
+    },
+    "/videos/{id}/uploads/parts": {
+      "post": {
+        "operationId": "VideosController_signUploadParts",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignUploadPartsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SignedUploadPartsResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Sign selected multipart upload parts",
+        "tags": [
+          "videos"
+        ]
+      }
+    },
+    "/videos/{id}/uploads/complete": {
+      "post": {
+        "operationId": "VideosController_completeUpload",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompleteVideoUploadDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProcessingVideoResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Complete a multipart upload and schedule processing",
+        "tags": [
+          "videos"
+        ]
+      }
+    },
+    "/videos/{id}/uploads": {
+      "delete": {
+        "operationId": "VideosController_abortUpload",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Upload aborted"
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Abort a draft multipart video upload",
+        "tags": [
+          "videos"
+        ]
+      }
+    },
+    "/videos/{id}": {
+      "get": {
+        "operationId": "VideosController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VideoResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Get owner-scoped video metadata",
+        "tags": [
+          "videos"
+        ]
+      }
+    },
+    "/videos/{id}/thumbnail": {
+      "get": {
+        "operationId": "VideosController_thumbnail",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "307": {
+            "description": "Temporary redirect to a signed private JPEG URL",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "string",
+                  "format": "uri"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Redirect to the private video thumbnail",
+        "tags": [
+          "videos"
+        ]
+      }
+    },
+    "/videos/{id}/stream": {
+      "get": {
+        "operationId": "VideosController_stream",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "307": {
+            "description": "Temporary redirect preserving optional Range headers",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "string",
+                  "format": "uri"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Redirect to the private streamable source",
+        "tags": [
+          "videos"
+        ]
+      }
+    },
+    "/videos/{id}/download": {
+      "get": {
+        "operationId": "VideosController_download",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "307": {
+            "description": "Temporary redirect to a signed attachment URL",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "string",
+                  "format": "uri"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Redirect to the private source as an attachment",
+        "tags": [
+          "videos"
+        ]
+      }
     }
   },
   "info": {
@@ -480,6 +1145,325 @@
       "ResetPasswordDto": {
         "type": "object",
         "properties": {}
+      },
+      "InitiateVideoUploadDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "My first video",
+            "maxLength": 255
+          },
+          "original_filename": {
+            "type": "string",
+            "example": "video.mp4",
+            "maxLength": 255
+          },
+          "content_type": {
+            "type": "string",
+            "enum": [
+              "video/mp4",
+              "video/webm",
+              "video/quicktime"
+            ],
+            "example": "video/mp4"
+          },
+          "size_bytes": {
+            "type": "number",
+            "example": 1048576,
+            "minimum": 1,
+            "maximum": 10737418240
+          }
+        },
+        "required": [
+          "title",
+          "original_filename",
+          "content_type",
+          "size_bytes"
+        ]
+      },
+      "InitiatedUploadDetailsDto": {
+        "type": "object",
+        "properties": {
+          "upload_id": {
+            "type": "string"
+          },
+          "part_size_bytes": {
+            "type": "number",
+            "example": 67108864
+          },
+          "part_count": {
+            "type": "number",
+            "example": 1
+          },
+          "expires_in_seconds": {
+            "type": "number",
+            "example": 900
+          }
+        },
+        "required": [
+          "upload_id",
+          "part_size_bytes",
+          "part_count",
+          "expires_in_seconds"
+        ]
+      },
+      "InitiatedVideoUploadResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "DRAFT"
+            ]
+          },
+          "upload": {
+            "$ref": "#/components/schemas/InitiatedUploadDetailsDto"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "upload"
+        ]
+      },
+      "SignUploadPartsDto": {
+        "type": "object",
+        "properties": {
+          "part_numbers": {
+            "minItems": 1,
+            "maxItems": 20,
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          }
+        },
+        "required": [
+          "part_numbers"
+        ]
+      },
+      "SignedUploadPartDto": {
+        "type": "object",
+        "properties": {
+          "part_number": {
+            "type": "number"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "part_number",
+          "url",
+          "expires_at"
+        ]
+      },
+      "SignedUploadPartsResponseDto": {
+        "type": "object",
+        "properties": {
+          "parts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SignedUploadPartDto"
+            }
+          }
+        },
+        "required": [
+          "parts"
+        ]
+      },
+      "CompleteUploadPartDto": {
+        "type": "object",
+        "properties": {
+          "part_number": {
+            "type": "number",
+            "minimum": 1
+          },
+          "etag": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "part_number",
+          "etag"
+        ]
+      },
+      "CompleteVideoUploadDto": {
+        "type": "object",
+        "properties": {
+          "parts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CompleteUploadPartDto"
+            }
+          }
+        },
+        "required": [
+          "parts"
+        ]
+      },
+      "ProcessingVideoResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PROCESSING"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "status"
+        ]
+      },
+      "VideoMetadataDto": {
+        "type": "object",
+        "properties": {
+          "format_name": {
+            "type": "string"
+          },
+          "bit_rate": {
+            "type": "number",
+            "nullable": true
+          },
+          "video_codec": {
+            "type": "string"
+          },
+          "audio_codec": {
+            "type": "string",
+            "nullable": true
+          },
+          "width": {
+            "type": "number"
+          },
+          "height": {
+            "type": "number"
+          },
+          "frame_rate": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "format_name",
+          "bit_rate",
+          "video_codec",
+          "audio_codec",
+          "width",
+          "height",
+          "frame_rate"
+        ]
+      },
+      "VideoResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "PROCESSING",
+              "READY",
+              "ERROR"
+            ]
+          },
+          "original_filename": {
+            "type": "string"
+          },
+          "content_type": {
+            "type": "string"
+          },
+          "size_bytes": {
+            "type": "number",
+            "maximum": 10737418240
+          },
+          "duration_seconds": {
+            "type": "number",
+            "nullable": true
+          },
+          "metadata": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VideoMetadataDto"
+              }
+            ]
+          },
+          "processing_error": {
+            "type": "string",
+            "nullable": true
+          },
+          "thumbnail_url": {
+            "type": "string",
+            "nullable": true
+          },
+          "stream_url": {
+            "type": "string",
+            "nullable": true
+          },
+          "download_url": {
+            "type": "string",
+            "nullable": true
+          },
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "uploaded_at": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "processed_at": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "status",
+          "original_filename",
+          "content_type",
+          "size_bytes",
+          "duration_seconds",
+          "metadata",
+          "processing_error",
+          "thumbnail_url",
+          "stream_url",
+          "download_url",
+          "created_at",
+          "updated_at",
+          "uploaded_at",
+          "processed_at"
+        ]
       },
       "ApiErrorEnvelope": {
         "type": "object",
