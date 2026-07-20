@@ -1,9 +1,18 @@
-FROM node:25.6.0-slim
+FROM node:25.6.0-bookworm-slim
 
-RUN apt update && apt install -y procps curl
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends procps curl ffmpeg \
+    && ffmpeg -version \
+    && ffprobe -version \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /home/node/app
 
+COPY package.json package-lock.json ./
+RUN npm ci
+
+COPY . .
+
 USER node
 
-CMD [ "tail", "-f", "/dev/null" ] 
+CMD ["npm", "run", "start:dev"]

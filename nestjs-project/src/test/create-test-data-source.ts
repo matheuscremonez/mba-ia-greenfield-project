@@ -24,6 +24,12 @@ export function createTestDataSource(
 }
 
 export async function cleanAllTables(dataSource: DataSource): Promise<void> {
+  const hasVideos = (await dataSource.query(
+    `SELECT to_regclass('public.videos') AS table_name`,
+  )) as Array<{ table_name: string | null }>;
+  if (hasVideos[0]?.table_name) {
+    await dataSource.query('DELETE FROM "videos"');
+  }
   await dataSource.query('DELETE FROM "refresh_tokens"');
   await dataSource.query('DELETE FROM "verification_tokens"');
   await dataSource.query('DELETE FROM "channels"');

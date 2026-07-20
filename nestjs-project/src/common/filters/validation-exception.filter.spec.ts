@@ -64,4 +64,26 @@ describe('ValidationExceptionFilter', () => {
       message: ['Invalid input'],
     });
   });
+
+  it('uses the multipart-specific code for upload part payloads', () => {
+    mockHost.switchToHttp = () =>
+      ({
+        getResponse: () => ({ status: mockStatus }),
+        getRequest: () => ({
+          path: '/videos/0e4dc0d0-0925-4cc1-9701-4b29d73255cf/uploads/parts',
+          method: 'POST',
+        }),
+      }) as ReturnType<ArgumentsHost['switchToHttp']>;
+    const exception = new BadRequestException({
+      message: ['part_numbers must contain at least 1 elements'],
+    });
+
+    filter.catch(exception, mockHost);
+
+    expect(mockJson).toHaveBeenCalledWith({
+      statusCode: 400,
+      error: 'UPLOAD_PARTS_INVALID',
+      message: ['part_numbers must contain at least 1 elements'],
+    });
+  });
 });
