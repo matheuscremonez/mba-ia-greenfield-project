@@ -63,3 +63,9 @@ export class VideoTypeUnsupportedException extends DomainException {
     super('VIDEO_TYPE_UNSUPPORTED', 415, 'Video content type is unsupported');
   }
 }
+
+export class VideoNotReadyException extends DomainException {
+  constructor() {
+    super('VIDEO_NOT_READY', 409, 'Video media is not ready');
+  }
+}

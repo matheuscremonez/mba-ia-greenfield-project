@@ -2,12 +2,15 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   HttpCode,
   HttpStatus,
   Param,
   ParseUUIDPipe,
   Post,
+  Res,
 } from '@nestjs/common';
+import type { Response } from 'express';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -33,6 +36,8 @@ import {
 } from './dto/sign-upload-parts.dto';
 import { VideosService } from './videos.service';
 import type { CompletedUploadPart } from './storage/video-storage.types';
+import { VideoResponseDto } from './dto/video-response.dto';
+import { VideoStatus } from './video-status.enum';
 
 const errorSchema = { $ref: getSchemaPath(ApiErrorEnvelope) };
 
@@ -141,5 +146,99 @@ export class VideosController {
     @Param('id', new ParseUUIDPipe()) id: string,
   ): Promise<void> {
     await this.videosService.abortUpload(user.sub, id);
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Get owner-scoped video metadata' })
+  @ApiResponse({ status: 200, type: VideoResponseDto })
+  @ApiResponse({ status: 400, schema: errorSchema })
+  @ApiResponse({ status: 401, schema: errorSchema })
+  @ApiResponse({ status: 404, schema: errorSchema })
+  async findOne(
+    @CurrentUser() user: JwtPayload,
+    @Param('id', new ParseUUIDPipe()) id: string,
+  ): Promise<VideoResponseDto> {
+    const video = await this.videosService.findOne(user.sub, id);
+    const ready = video.status === VideoStatus.READY;
+    return {
+      id: video.id,
+      title: video.title,
+      status: video.status,
+      original_filename: video.original_filename,
+      content_type: video.content_type,
+      size_bytes: video.size_bytes,
+      duration_seconds: video.duration_seconds,
+      metadata: video.metadata,
+      processing_error:
+        video.status === VideoStatus.ERROR ? video.processing_error : null,
+      thumbnail_url:
+        ready && video.thumbnail_key ? `/videos/${video.id}/thumbnail` : null,
+      stream_url: ready ? `/videos/${video.id}/stream` : null,
+      download_url: ready ? `/videos/${video.id}/download` : null,
+      created_at: video.created_at,
+      updated_at: video.updated_at,
+      uploaded_at: video.uploaded_at,
+      processed_at: video.processed_at,
+    };
+  }
+
+  @Get(':id/thumbnail')
+  @ApiOperation({ summary: 'Redirect to the private video thumbnail' })
+  @ApiResponse({
+    status: 307,
+    description: 'Temporary redirect to a signed private JPEG URL',
+    headers: { Location: { schema: { type: 'string', format: 'uri' } } },
+  })
+  @ApiResponse({ status: 401, schema: errorSchema })
+  @ApiResponse({ status: 404, schema: errorSchema })
+  @ApiResponse({ status: 409, schema: errorSchema })
+  @ApiResponse({ status: 503, schema: errorSchema })
+  async thumbnail(
+    @CurrentUser() user: JwtPayload,
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<void> {
+    const signed = await this.videosService.signThumbnail(user.sub, id);
+    response.status(HttpStatus.TEMPORARY_REDIRECT).location(signed.url);
+  }
+
+  @Get(':id/stream')
+  @ApiOperation({ summary: 'Redirect to the private streamable source' })
+  @ApiResponse({
+    status: 307,
+    description: 'Temporary redirect preserving optional Range headers',
+    headers: { Location: { schema: { type: 'string', format: 'uri' } } },
+  })
+  @ApiResponse({ status: 401, schema: errorSchema })
+  @ApiResponse({ status: 404, schema: errorSchema })
+  @ApiResponse({ status: 409, schema: errorSchema })
+  @ApiResponse({ status: 503, schema: errorSchema })
+  async stream(
+    @CurrentUser() user: JwtPayload,
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<void> {
+    const signed = await this.videosService.signStream(user.sub, id);
+    response.status(HttpStatus.TEMPORARY_REDIRECT).location(signed.url);
+  }
+
+  @Get(':id/download')
+  @ApiOperation({ summary: 'Redirect to the private source as an attachment' })
+  @ApiResponse({
+    status: 307,
+    description: 'Temporary redirect to a signed attachment URL',
+    headers: { Location: { schema: { type: 'string', format: 'uri' } } },
+  })
+  @ApiResponse({ status: 401, schema: errorSchema })
+  @ApiResponse({ status: 404, schema: errorSchema })
+  @ApiResponse({ status: 409, schema: errorSchema })
+  @ApiResponse({ status: 503, schema: errorSchema })
+  async download(
+    @CurrentUser() user: JwtPayload,
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<void> {
+    const signed = await this.videosService.signDownload(user.sub, id);
+    response.status(HttpStatus.TEMPORARY_REDIRECT).location(signed.url);
   }
 }

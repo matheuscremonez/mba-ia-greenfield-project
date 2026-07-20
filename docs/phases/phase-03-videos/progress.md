@@ -1,7 +1,7 @@
 # phase-03-videos — Progress
 
-**Status:** in progress
-**SIs:** 5/8 completed
+**Status:** completed
+**SIs:** 8/8 completed
 
 ### SI-03.1 — Preparar infraestrutura de storage, fila e worker
 - **Status:** completed
@@ -29,16 +29,16 @@
 - **Observations:** The four JWT-protected routes return the planned status/error codes, preserve private object keys, document request/response schemas and reject anonymous calls without side effects.
 
 ### SI-03.6 — Processar vídeos no worker FFmpeg
-- **Status:** pending
-- **Tests:** pending
-- **Observations:** none
+- **Status:** completed
+- **Tests:** 11/11 unit tests plus 2/2 real-media/module integration tests passing; FFmpeg, PostgreSQL, MinIO and Redis exercised; worker container compiled with zero errors and remained active.
+- **Observations:** The dedicated Nest application context consumes `video.process`, locks lifecycle transitions, uses isolated temporary directories, uploads a deterministic JPEG and stores only a bounded sanitized terminal error.
 
 ### SI-03.7 — Expor metadata, streaming, thumbnail e download
-- **Status:** pending
-- **Tests:** pending
-- **Observations:** none
+- **Status:** completed
+- **Tests:** 12/12 video service unit tests, 5/5 media-access E2E tests and 13/13 OpenAPI/module tests passing; real private redirects, `206 Range` and attachment headers verified.
+- **Observations:** Read queries remain owner-scoped, response DTOs redact storage internals, media is never signed before `READY`, and all bytes continue to flow directly from MinIO/S3.
 
 ### SI-03.8 — Sincronizar contratos e documentação operacional
-- **Status:** pending
-- **Tests:** pending
-- **Observations:** none
+- **Status:** completed
+- **Tests:** backend unit 213/213, integration 106/106 and E2E 62/62 passing; backend lint, TypeScript and build passing; frontend 67/67, lint and TypeScript passing; OpenAPI copies byte-identical; Compose API/worker startup and authenticated upload → FFmpeg processing → `206 Range` → byte-identical download smoke flow passing.
+- **Observations:** OpenAPI and frontend types were regenerated, the C4-style Mermaid diagram and operational README were updated, active `AGENTS.md` guidance now covers the producer/consumer and private-storage boundaries, and test-only ESLint rules were scoped to Jest/Supertest files while production rules remain strict.

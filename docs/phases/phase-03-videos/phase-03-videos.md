@@ -588,25 +588,25 @@ SI-03.1 (root — dependencies, config and Compose services)
 
 ## Deliverables
 
-- [ ] SI-03.1 — Preparar infraestrutura de storage, fila e worker
-- [ ] SI-03.2 — Persistir o ciclo de vida de vídeos
-- [ ] SI-03.3 — Implementar o adaptador S3 privado
-- [ ] SI-03.4 — Orquestrar uploads e publicação do processamento
-- [ ] SI-03.5 — Expor os endpoints de upload multipart
-- [ ] SI-03.6 — Processar vídeos no worker FFmpeg
-- [ ] SI-03.7 — Expor metadata, streaming, thumbnail e download
-- [ ] SI-03.8 — Sincronizar contratos e documentação operacional
+- [x] SI-03.1 — Preparar infraestrutura de storage, fila e worker
+- [x] SI-03.2 — Persistir o ciclo de vida de vídeos
+- [x] SI-03.3 — Implementar o adaptador S3 privado
+- [x] SI-03.4 — Orquestrar uploads e publicação do processamento
+- [x] SI-03.5 — Expor os endpoints de upload multipart
+- [x] SI-03.6 — Processar vídeos no worker FFmpeg
+- [x] SI-03.7 — Expor metadata, streaming, thumbnail e download
+- [x] SI-03.8 — Sincronizar contratos e documentação operacional
 
 **Full test suites:**
 
-- [ ] Backend unit tests pass (`cd nestjs-project && npm test -- --runInBand`)
-- [ ] Backend integration tests pass (`cd nestjs-project && npm run test:integration`)
-- [ ] Backend E2E tests pass (`cd nestjs-project && npm run test:e2e`)
-- [ ] Backend lint passes (`cd nestjs-project && npm run lint`)
-- [ ] Backend compilation passes (`cd nestjs-project && npx tsc --noEmit`)
-- [ ] Backend build succeeds (`cd nestjs-project && npm run build`)
-- [ ] TypeORM migrations pass in both directions against PostgreSQL (`cd nestjs-project && npm run test:integration -- migrations.integration-spec.ts`)
-- [ ] OpenAPI export and sync complete (`cd nestjs-project && npm run openapi:export`, then `./scripts/sync-openapi.sh`)
-- [ ] Frontend generated types are current (`cd next-frontend && npm run openapi:types && npx tsc --noEmit`)
-- [ ] Frontend contract-facing tests and lint pass (`cd next-frontend && npm test && npm run lint`)
-- [ ] Compose healthchecks and the authenticated upload → process → range stream → download smoke flow pass with real PostgreSQL, Redis, MinIO and FFmpeg.
+- [x] Backend unit tests pass (`cd nestjs-project && npm test -- --runInBand`)
+- [x] Backend integration tests pass (`cd nestjs-project && npm run test:integration`)
+- [x] Backend E2E tests pass (`cd nestjs-project && npm run test:e2e`)
+- [x] Backend lint passes (`cd nestjs-project && npm run lint`)
+- [x] Backend compilation passes (`cd nestjs-project && npx tsc --noEmit`)
+- [x] Backend build succeeds (`cd nestjs-project && npm run build`)
+- [x] TypeORM migrations pass in both directions against PostgreSQL (`cd nestjs-project && npm run test:integration -- migrations.integration-spec.ts`)
+- [x] OpenAPI export and sync complete (`cd nestjs-project && npm run openapi:export`, then `./scripts/sync-openapi.sh`)
+- [x] Frontend generated types are current (`cd next-frontend && npm run openapi:types && npx tsc --noEmit`)
+- [x] Frontend contract-facing tests and lint pass (`cd next-frontend && npm test && npm run lint`)
+- [x] Compose healthchecks and the authenticated upload → process → range stream → download smoke flow pass with real PostgreSQL, Redis, MinIO and FFmpeg.

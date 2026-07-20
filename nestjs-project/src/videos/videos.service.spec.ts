@@ -10,6 +10,7 @@ import {
   UploadSizeMismatchException,
   VideoInvalidStateException,
   VideoNotFoundException,
+  VideoNotReadyException,
   VideoTooLargeException,
   VideoTypeUnsupportedException,
 } from './exceptions/video.exceptions';
@@ -75,6 +76,9 @@ describe('VideosService', () => {
     headSource: jest.Mock;
     abortMultipartUpload: jest.Mock;
     deleteSource: jest.Mock;
+    signThumbnail: jest.Mock;
+    signStream: jest.Mock;
+    signDownload: jest.Mock;
   };
   let queue: { publish: jest.Mock };
   let service: VideosService;
@@ -96,6 +100,9 @@ describe('VideosService', () => {
       headSource: jest.fn(),
       abortMultipartUpload: jest.fn(),
       deleteSource: jest.fn(),
+      signThumbnail: jest.fn(),
+      signStream: jest.fn(),
+      signDownload: jest.fn(),
     };
     queue = { publish: jest.fn() };
     service = new VideosService(
@@ -249,5 +256,60 @@ describe('VideosService', () => {
       service.abortUpload(userId, video().id),
     ).rejects.toBeInstanceOf(VideoInvalidStateException);
     expect(storage.deleteSource).not.toHaveBeenCalled();
+  });
+
+  it('returns owner-scoped metadata in every lifecycle state', async () => {
+    const draft = video();
+    repository.findOne.mockResolvedValue(draft);
+
+    await expect(service.findOne(userId, draft.id)).resolves.toBe(draft);
+    expect(repository.findOne).toHaveBeenCalledWith({
+      where: { id: draft.id, channel: { user_id: userId } },
+    });
+  });
+
+  it('rejects all media signing before READY without touching storage', async () => {
+    const processing = video({
+      status: VideoStatus.PROCESSING,
+      multipart_upload_id: null,
+    });
+    repository.findOne.mockResolvedValue(processing);
+
+    await expect(
+      service.signThumbnail(userId, processing.id),
+    ).rejects.toBeInstanceOf(VideoNotReadyException);
+    await expect(
+      service.signStream(userId, processing.id),
+    ).rejects.toBeInstanceOf(VideoNotReadyException);
+    await expect(
+      service.signDownload(userId, processing.id),
+    ).rejects.toBeInstanceOf(VideoNotReadyException);
+    expect(storage.signThumbnail).not.toHaveBeenCalled();
+    expect(storage.signStream).not.toHaveBeenCalled();
+    expect(storage.signDownload).not.toHaveBeenCalled();
+  });
+
+  it('signs READY media using only persisted keys and filename', async () => {
+    const ready = video({
+      status: VideoStatus.READY,
+      multipart_upload_id: null,
+      thumbnail_key: 'thumbnails/id/default.jpg',
+    });
+    repository.findOne.mockResolvedValue(ready);
+    const signed = { url: 'http://signed', expiresAt: new Date() };
+    storage.signThumbnail.mockResolvedValue(signed);
+    storage.signStream.mockResolvedValue(signed);
+    storage.signDownload.mockResolvedValue(signed);
+
+    await service.signThumbnail(userId, ready.id);
+    await service.signStream(userId, ready.id);
+    await service.signDownload(userId, ready.id);
+
+    expect(storage.signThumbnail).toHaveBeenCalledWith(ready.thumbnail_key);
+    expect(storage.signStream).toHaveBeenCalledWith(ready.source_key);
+    expect(storage.signDownload).toHaveBeenCalledWith(
+      ready.source_key,
+      ready.original_filename,
+    );
   });
 });

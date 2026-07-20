@@ -7,10 +7,10 @@ C4Container
     Container_Boundary(c1, "StreamTube") {
         Container(frontend, "Frontend", "Next.js", "Platform interface")
         Container(api, "API", "Nest.js", "Business rules and authentication")
-        Container(worker, "Video Worker", "FFmpeg", "Processes videos in background")
+        Container(worker, "Video Worker", "NestJS + FFmpeg", "Consumes jobs, extracts metadata and creates thumbnails")
         ContainerDb(db, "Database", "PostgreSQL", "Users, channels, videos, comments, likes")
-        ContainerDb(storage, "Object Storage", "S3 or MinIO", "Video files and thumbnails")
-        ContainerQueue(queue, "Message Queue", "TBD", "Enqueues video processing jobs")
+        ContainerDb(storage, "Private Object Storage", "S3 or MinIO", "Separate source-video and thumbnail buckets")
+        ContainerQueue(queue, "Video Processing Queue", "Redis + BullMQ", "Persists video.process jobs and retries")
     }
 
     System_Ext(email, "Email Service", "Account confirmation and password recovery")
@@ -18,16 +18,16 @@ C4Container
     Rel(anonUser, frontend, "Uses", "HTTPS")
     Rel(authUser, frontend, "Uses", "HTTPS")
     Rel(frontend, api, "Calls", "REST")
-    Rel(frontend, storage, "Streams", "HTTPS")
+    Rel(frontend, storage, "Uploads parts, streams and downloads with signed URLs", "HTTPS")
 
     Rel(api, db, "Reads/Writes")
-    Rel(api, storage, "Uploads")
-    Rel(api, queue, "Publishes job")
+    Rel(api, storage, "Creates multipart uploads and signs private URLs", "S3 API")
+    Rel(api, queue, "Publishes video.process", "Redis")
     Rel(api, email, "Sends email", "SMTP")
 
-    Rel(queue, worker, "Delivers job")
-    Rel(worker, storage, "Reads/Saves")
-    Rel(worker, db, "Updates")
+    Rel(queue, worker, "Delivers jobs with retries", "BullMQ")
+    Rel(worker, storage, "Downloads sources and uploads JPEG thumbnails", "S3 API")
+    Rel(worker, db, "Updates PROCESSING to READY or ERROR", "SQL")
 
     UpdateElementStyle(anonUser, $bgColor="#37474F", $fontColor="#ECEFF1", $borderColor="#78909C")
     UpdateElementStyle(authUser, $bgColor="#37474F", $fontColor="#ECEFF1", $borderColor="#78909C")

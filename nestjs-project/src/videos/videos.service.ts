@@ -18,10 +18,12 @@ import {
   UploadSizeMismatchException,
   VideoInvalidStateException,
   VideoNotFoundException,
+  VideoNotReadyException,
   VideoTooLargeException,
   VideoTypeUnsupportedException,
 } from './exceptions/video.exceptions';
 import { VideoProcessingQueue } from './queue/video-processing.queue';
+import { SignedObjectUrl } from './storage/video-storage.types';
 
 export interface InitiateVideoUploadInput {
   title: string;
@@ -237,6 +239,40 @@ export class VideosService {
     if (deletion.affected !== 1) {
       throw new VideoInvalidStateException();
     }
+  }
+
+  findOne(userId: string, videoId: string): Promise<Video> {
+    return this.findOwnedVideo(userId, videoId);
+  }
+
+  async signThumbnail(
+    userId: string,
+    videoId: string,
+  ): Promise<SignedObjectUrl> {
+    const video = await this.findOwnedVideo(userId, videoId);
+    if (video.status !== VideoStatus.READY || !video.thumbnail_key) {
+      throw new VideoNotReadyException();
+    }
+    return this.storage.signThumbnail(video.thumbnail_key);
+  }
+
+  async signStream(userId: string, videoId: string): Promise<SignedObjectUrl> {
+    const video = await this.findOwnedVideo(userId, videoId);
+    if (video.status !== VideoStatus.READY) {
+      throw new VideoNotReadyException();
+    }
+    return this.storage.signStream(video.source_key);
+  }
+
+  async signDownload(
+    userId: string,
+    videoId: string,
+  ): Promise<SignedObjectUrl> {
+    const video = await this.findOwnedVideo(userId, videoId);
+    if (video.status !== VideoStatus.READY) {
+      throw new VideoNotReadyException();
+    }
+    return this.storage.signDownload(video.source_key, video.original_filename);
   }
 
   private async findOwnedVideo(
